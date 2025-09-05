@@ -36,8 +36,8 @@ export const ANIMATION_CONFIG = {
 export const RADIUS_CONFIG = {
   minScale: 0.6,
   maxScale: 1.4,
-  speakingScale: 1.0,
-  quietScale: 0.6,
+  speakingScale: 1.4,
+  quietScale: 0.2,
   baseRadius: {
     default: width,
     speaking: width / 4,
