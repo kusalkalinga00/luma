@@ -1,15 +1,16 @@
-import React from 'react'
-import { TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { COLORS } from "@/constants";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
-function TextButton({ onPress, text }: { onPress: () => void, text: string }) {
+function TextButton({ onPress, text }: { onPress: () => void; text: string }) {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.switchModeButton} >
+    <TouchableOpacity onPress={onPress} style={styles.switchModeButton}>
       <Text style={styles.switchModeText}>{text}</Text>
     </TouchableOpacity>
-  )
+  );
 }
 
-export default TextButton
+export default TextButton;
 
 const styles = StyleSheet.create({
   switchModeButton: {
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
   },
   switchModeText: {
     fontSize: 16,
-    color: "#5e41f7",
+    color: COLORS.primary,
     fontWeight: "500",
-  }
+  },
 });
