@@ -97,6 +97,18 @@ export function Gradient({ position, isSpeaking }: GradientProps) {
     });
   }, []);
 
+  useEffect(() => {
+    const duration = ANIMATION_CONFIG.durations.SPEAKING_TRANSITION;
+
+    if (isSpeaking) {
+      baseRadiusValue.value = withTiming(RADIUS_CONFIG.baseRadius.speaking);
+      animatedY.value = withTiming(getTargetY("center"), { duration });
+    } else {
+      baseRadiusValue.value = withTiming(RADIUS_CONFIG.baseRadius.default);
+      animatedY.value = withTiming(getTargetY(position), { duration });
+    }
+  }, [isSpeaking, animatedY, baseRadiusValue, position]);
+
   return (
     <View style={StyleSheet.absoluteFill}>
       <Canvas
