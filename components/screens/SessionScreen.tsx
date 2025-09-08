@@ -3,7 +3,8 @@ import { useSession } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import Button from "../common/Button";
 import { Gradient } from "../common/gradient";
 
 const SessionScreen = () => {
@@ -87,12 +88,8 @@ const SessionScreen = () => {
         >
           {session.description}
         </Text>
-        <Button title="Start Conversation" onPress={startConversation} />
-        <Button
-          title="End Conversation"
-          color={"red"}
-          onPress={endConversation}
-        />
+        <Button onPress={startConversation}>Start Conversation</Button>
+        <Button onPress={endConversation}>End Conversation</Button>
       </View>
     </>
   );
