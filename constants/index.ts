@@ -10,6 +10,7 @@ export const COLORS = {
   backgroundSecondary: "#FAFDD6",
   BackgroundGrd: "#DDF4E7",
   white: "#FFFFFF",
+  buttonPrimary: "#476EAE",
 };
 
 export const VISUAL_CONFIG = {

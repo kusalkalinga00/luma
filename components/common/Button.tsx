@@ -22,7 +22,7 @@ export default function Button({ children, ...props }: PressableProps) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.buttonPrimary,
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderRadius: 20,

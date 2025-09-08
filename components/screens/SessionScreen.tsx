@@ -16,7 +16,9 @@ const SessionScreen = () => {
   const [conversationId, setConversationId] = useState<string | null>(null);
 
   const conversation = useConversation({
-    onConnect: () => console.log("Connected to conversation"),
+    onConnect: ({ conversationId }) => {
+      setConversationId(conversationId);
+    },
     onDisconnect: () => console.log("Disconnected from conversation"),
     onMessage: (message) => console.log("Received message:", message),
     onError: (error) => console.error("Conversation error:", error),
