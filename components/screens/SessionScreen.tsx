@@ -1,8 +1,20 @@
+import { sessions } from "@/utils/sessions";
+import { useSession } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
-import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Button from "../common/Button";
+import { Gradient } from "../common/gradient";
 
 const SessionScreen = () => {
+  const user = useSession();
+  const { sessionId } = useLocalSearchParams();
+  const session = sessions.find((s) => s.id === sessionId) ?? sessions[0];
+
+  const [isStarting, setIsStarting] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
   const conversation = useConversation({
     onConnect: () => console.log("Connected to conversation"),
     onDisconnect: () => console.log("Disconnected from conversation"),
@@ -18,17 +30,23 @@ const SessionScreen = () => {
   });
 
   const startConversation = async () => {
+    if (isStarting) return;
+
     try {
+      setIsStarting(true);
       await conversation.startSession({
         agentId: process.env.EXPO_PUBLIC_AGENT_ID,
         dynamicVariables: {
-          user_name: "Kusal",
-          session_title: "test",
+          user_name: user.session?.user.firstName || "User",
+          session_title: session.title,
+          session_description: session.description,
         },
       });
       console.log("");
     } catch (error) {
       console.log("Failed to start conversation:", error);
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -40,16 +58,53 @@ const SessionScreen = () => {
     }
   };
 
+  const canStart = conversation.status === "disconnected" && !isStarting;
+  const canEnd = conversation.status === "connected";
+
   return (
-    <View>
-      <Text>Session Screen</Text>
-      <Button title="Start Conversation" onPress={startConversation} />
-      <Button
-        title="End Conversation"
-        color={"red"}
-        onPress={endConversation}
+    <>
+      <Gradient
+        position="top"
+        isSpeaking={
+          conversation.status === "connected" ||
+          conversation.status === "connecting"
+        }
       />
-    </View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 16,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "bold",
+          }}
+        >
+          {session.title}
+        </Text>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "medium",
+            textAlign: "center",
+            opacity: 0.5,
+            paddingHorizontal: 10,
+          }}
+        >
+          {session.description}
+        </Text>
+        <Button
+          onPress={canStart ? startConversation : endConversation}
+          disabled={!canStart && !canEnd}
+        >
+          {canStart ? "Start Conversation" : "End Conversation"}
+        </Button>
+      </View>
+    </>
   );
 };
 
