@@ -1,8 +1,17 @@
+import { sessions } from "@/utils/sessions";
+import { useSession } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 const SessionScreen = () => {
+  const user = useSession();
+
+  const { sessionId } = useLocalSearchParams();
+
+  const session = sessions.find((s) => s.id === sessionId) ?? sessions[0];
+
   const conversation = useConversation({
     onConnect: () => console.log("Connected to conversation"),
     onDisconnect: () => console.log("Disconnected from conversation"),
@@ -22,8 +31,9 @@ const SessionScreen = () => {
       await conversation.startSession({
         agentId: process.env.EXPO_PUBLIC_AGENT_ID,
         dynamicVariables: {
-          user_name: "Kusal",
-          session_title: "test",
+          user_name: user.session?.user.firstName || "User",
+          session_title: session.title,
+          session_description: session.description,
         },
       });
       console.log("");
@@ -43,6 +53,7 @@ const SessionScreen = () => {
   return (
     <View>
       <Text>Session Screen</Text>
+      <Text>{sessionId}</Text>
       <Button title="Start Conversation" onPress={startConversation} />
       <Button
         title="End Conversation"
