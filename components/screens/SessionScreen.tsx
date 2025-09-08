@@ -2,17 +2,18 @@ import { sessions } from "@/utils/sessions";
 import { useSession } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Button from "../common/Button";
 import { Gradient } from "../common/gradient";
 
 const SessionScreen = () => {
   const user = useSession();
-
   const { sessionId } = useLocalSearchParams();
-
   const session = sessions.find((s) => s.id === sessionId) ?? sessions[0];
+
+  const [isStarting, setIsStarting] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   const conversation = useConversation({
     onConnect: () => console.log("Connected to conversation"),
@@ -29,7 +30,10 @@ const SessionScreen = () => {
   });
 
   const startConversation = async () => {
+    if (isStarting) return;
+
     try {
+      setIsStarting(true);
       await conversation.startSession({
         agentId: process.env.EXPO_PUBLIC_AGENT_ID,
         dynamicVariables: {
@@ -41,6 +45,8 @@ const SessionScreen = () => {
       console.log("");
     } catch (error) {
       console.log("Failed to start conversation:", error);
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -51,6 +57,9 @@ const SessionScreen = () => {
       console.log("Failed to end conversation:", error);
     }
   };
+
+  const canStart = conversation.status === "disconnected" && !isStarting;
+  const canEnd = conversation.status === "connected";
 
   return (
     <>
@@ -88,8 +97,12 @@ const SessionScreen = () => {
         >
           {session.description}
         </Text>
-        <Button onPress={startConversation}>Start Conversation</Button>
-        <Button onPress={endConversation}>End Conversation</Button>
+        <Button
+          onPress={canStart ? startConversation : endConversation}
+          disabled={!canStart && !canEnd}
+        >
+          {canStart ? "Start Conversation" : "End Conversation"}
+        </Button>
       </View>
     </>
   );
