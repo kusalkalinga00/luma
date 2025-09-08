@@ -4,6 +4,7 @@ import { useConversation } from "@elevenlabs/react-native";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
+import { Gradient } from "../common/gradient";
 
 const SessionScreen = () => {
   const user = useSession();
@@ -51,16 +52,49 @@ const SessionScreen = () => {
   };
 
   return (
-    <View>
-      <Text>Session Screen</Text>
-      <Text>{sessionId}</Text>
-      <Button title="Start Conversation" onPress={startConversation} />
-      <Button
-        title="End Conversation"
-        color={"red"}
-        onPress={endConversation}
+    <>
+      <Gradient
+        position="top"
+        isSpeaking={
+          conversation.status === "connected" ||
+          conversation.status === "connecting"
+        }
       />
-    </View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 16,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "bold",
+          }}
+        >
+          {session.title}
+        </Text>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "medium",
+            textAlign: "center",
+            opacity: 0.5,
+            paddingHorizontal: 10,
+          }}
+        >
+          {session.description}
+        </Text>
+        <Button title="Start Conversation" onPress={startConversation} />
+        <Button
+          title="End Conversation"
+          color={"red"}
+          onPress={endConversation}
+        />
+      </View>
+    </>
   );
 };
 
