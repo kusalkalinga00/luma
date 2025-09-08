@@ -2,7 +2,7 @@ import { sessions } from "@/utils/sessions";
 import { useSession } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
 import * as Brightness from "expo-brightness";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Button from "../common/Button";
@@ -15,6 +15,7 @@ const SessionScreen = () => {
 
   const [isStarting, setIsStarting] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const router = useRouter();
 
   const conversation = useConversation({
     onConnect: ({ conversationId }) => {
@@ -67,6 +68,10 @@ const SessionScreen = () => {
   const endConversation = async () => {
     try {
       await conversation.endSession();
+      router.push({
+        pathname: "/summary",
+        params: { conversationId },
+      });
     } catch (error) {
       console.log("Failed to end conversation:", error);
     }
