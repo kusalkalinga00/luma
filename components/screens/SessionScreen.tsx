@@ -1,6 +1,7 @@
 import { sessions } from "@/utils/sessions";
 import { useSession } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
+import * as Brightness from "expo-brightness";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -29,6 +30,17 @@ const SessionScreen = () => {
       console.log("Can send feedback changed:", prop.canSendFeedback),
     onUnhandledClientToolCall: (params) =>
       console.log("Unhandled client tool call:", params),
+    clientTools: {
+      handleSetBrightness: async (parameters: unknown) => {
+        const { brightnessValue } = parameters as { brightnessValue: number };
+        console.log("Setting brightness to:", brightnessValue);
+        const { status } = await Brightness.requestPermissionsAsync();
+        if (status === "granted") {
+          await Brightness.setBrightnessAsync(brightnessValue);
+          return brightnessValue;
+        }
+      },
+    },
   });
 
   const startConversation = async () => {
